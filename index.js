@@ -2,7 +2,8 @@ import express from "express";
 import { dbConnection } from "./database/config.js";
 import dotenv from "dotenv";
 import cors from 'cors';
-import { router } from "./routes/usuarios.js";
+import { router as usuarioRouter } from "./routes/usuarios.js";
+import { router as authRouter } from "./routes/auth.js";
 
 //Variables de entorno
 dotenv.config();
@@ -20,7 +21,8 @@ app.use( express.json() );
 dbConnection();
 
 //Rutas
-app.use('/api/usuarios', router)
+app.use('/api/usuarios', usuarioRouter)
+app.use('/api/login', authRouter)
 
 
 app.listen(process.env.PORT, () => {
