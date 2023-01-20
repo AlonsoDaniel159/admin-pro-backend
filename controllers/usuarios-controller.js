@@ -5,12 +5,33 @@ import { generarJWT } from '../helpers/jwt.js';
 
 export const getUsuarios = async (req, res) => {
 
-    const usuarios = await Usuario.find({}, 'nombre email rol google');
+    const desde = Number(req.query.desde) || 0;
+
+    //OPCIONAL SI SE QUIERE MANDAR EL LÍMITE POR PÁGINA
+    // const  limite  = Number(req.query.limite) || 5;
+
+    // const usuarios = await Usuario
+    //     .find({}, 'nombre email rol google')
+    //     .skip(desde)
+    //     .limit(5);
+
+    // const total = await Usuario.countDocuments();
+
+    //Promise.all para ejecutar ambas promesas al mismo tiempo
+    const [usuarios, total] = await Promise.all([
+        Usuario
+            .find({}, 'nombre email rol google img')
+            .skip(desde)
+            .limit(5),
+
+        Usuario.countDocuments()
+    ])
 
     res.json({
         ok: true,
         usuarios,
-        uid: req.uid
+        // uid: req.uid,
+        total
     })
 
 }
@@ -122,7 +143,7 @@ export const borrarUsuario = async (req, res = response) => {
             })
         }
 
-        await Usuario.findByIdAndDelete( uid );
+        await Usuario.findByIdAndDelete(uid);
 
         res.json({
             ok: true,
