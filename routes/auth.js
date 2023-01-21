@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { googleSignIn, login } from "../controllers/auth-controller.js";
+import { googleSignIn, login, renewToken } from "../controllers/auth-controller.js";
 import { validarCampos } from "../middlewares/valida-campos.js";
-
+import { validarJWT } from "../middlewares/validar-jwt.js"
 
 export const router = Router();
 
@@ -19,4 +19,9 @@ router.post('/', [
 router.post('/google', [
     body('token', 'La token de google es obligatorio').not().isEmpty(),
     validarCampos
+], googleSignIn);
+
+router.get('/renew', [
+    validarJWT,
+    renewToken
 ], googleSignIn);
